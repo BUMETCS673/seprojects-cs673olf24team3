@@ -26,6 +26,7 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test --transformIgnorePatterns \"node_modules/(?!@toolz/allow-react)/\" --env=jsdom",
+    "test-esm": "node --experimental-vm-modules node_modules/.bin/jest",
     "eject": "react-scripts eject"
   },
   "eslintConfig": {

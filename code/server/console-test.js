@@ -1,8 +1,8 @@
 //This file is for testing connection to the database.  It will print out data to the console.
 
-const db = require("./db.js")
+import { getModel, closeConnection } from './db.js'
 
-const User = db.getModel().userModel
+const User = getModel().userModel
 
 async function consoleTest() {
     try {
@@ -16,7 +16,7 @@ async function consoleTest() {
 
     } finally {
 
-        db.closeConnection()
+        closeConnection()
         
     }
 }

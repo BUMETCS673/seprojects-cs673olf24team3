@@ -3,13 +3,18 @@
   "version": "1.0.0",
   "description": "",
   "main": "server.js",
+  "type": "module",
   "scripts": {
     "build": "cd ../client && npm run build",
     "install-client": "cd ../client && npm install",
     "heroku-postbuild": "npm run install-client && npm run build",
     "test": "echo \"Error: no test specified\" && exit 1",
+    "test-esm": "node --experimental-vm-modules node_modules/.bin/jest",
     "start": "cross-env NODE_ENV=production node server.js",
     "dev": "cross-env NODE_ENV=development nodemon server.js"
+  },
+  "jest": {
+    "transform": {}
   },
   "keywords": [],
   "author": "",
@@ -24,6 +29,7 @@
     "mongoose": "^8.6.3"
   },
   "devDependencies": {
+    "jest": "^29.7.0",
     "nodemon": "^3.1.5"
   }
 }

@@ -1,24 +1,23 @@
 //This file is the main entrypoint for the backend of the application.
 //It sets up and runs the server, it connects to the database, and it defines how the application responds to incoming requests.
 
-const express = require('express');
-const mongoose = require('mongoose');
-const cors = require('cors');
-const db = require("./db.js")
+import express from 'express';
+import mongoose from 'mongoose';
+import cors from 'cors';
+import { getModel } from './db.js'
+import bcrypt from 'bcrypt';
+import jwt from 'jsonwebtoken';
+import dotenv from 'dotenv';
+
+dotenv.config();
 
 const app = express();
-const port = process.env.PORT || 5000
-const User = db.getModel().userModel
-const Goal = db.getModel().goalModel
-
-const bcrypt = require('bcrypt');
-const jwt = require('jsonwebtoken');
+const port = process.env.PORT || 5000;
+const User = getModel().userModel;
+const Goal = getModel().goalModel;
 
 app.use(cors());
-
 app.use(express.json());
-
-require('dotenv').config();
 
 // WILL IMPLEMENT EXPRESS ROUTER--JUST USING THESE ROUTES FOR TESTING
 
@@ -31,7 +30,7 @@ app.get('/check-connection', async (req, res) => {
 })
 
 app.get('/view-users', async (req, res) => {
-  allUsers = await User.find({})
+  const allUsers = await User.find({})
   res.json(allUsers)
 })
 
