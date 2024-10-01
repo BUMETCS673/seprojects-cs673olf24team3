@@ -23,13 +23,13 @@
   }
   
   .login-form input {
-    width: 100%;
+    /* width: 100%;
     padding: 1vh;
     margin-bottom: 1.5vh;
     border: 1px solid #ecebeb;
     border-radius: 0.4vh;
     box-sizing: border-box;
-    transition: border-color 0.3s;
+    transition: border-color 0.3s; */
   }
   
   .login-form input:focus {
