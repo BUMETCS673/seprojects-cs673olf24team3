@@ -5,7 +5,6 @@ import App from '../App';
 
 // tests
 test('test connection to server', async () => {
-  console.log(process.env.REACT_APP_SERVER_URL)
   const response = await apiClient.get('/check-connection');
   expect(response.status).toBe(200);
 })
