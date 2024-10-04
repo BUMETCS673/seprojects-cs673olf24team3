@@ -3,37 +3,30 @@ services:
     build:
       context: .
       dockerfile: ./server/Dockerfile.production
+    container_name: react-ui
     env_file: .env.production
     image: api-production:latest  # Use Heroku registry format
     restart: unless-stopped
-    depends_on:
-      - mongo
     networks:
       - peak-performance
+    ports:
+      - "5000:5000"  # Map container port 5000 to host port 5000
 
   client:
     build:
       context: .
       dockerfile: ./client/Dockerfile.production
-    env_file: .env.production
+    env_file:
+      - ./client/.env.production
+    container_name: node-api
     image: client-production:latest  # Use Heroku registry format
     restart: unless-stopped
     networks:
       - peak-performance
     depends_on:
       - api
-
-  # Add mongo service if needed, otherwise remove it.
-  mongo:
-    image: mongo:latest
-    volumes:
-      - mongo_data:/data/db
-    networks:
-      - peak-performance
-
-volumes:
-  mongo_data:
-    driver: local
+    ports:
+      - "3000:3000"  # Map container port 3000 to host port 3000
 
 networks:
   peak-performance:

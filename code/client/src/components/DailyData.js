@@ -1,81 +1,162 @@
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
+import apiClient from "../services/apiClient.js";
 import {
   Box,
   Typography,
   TextField,
-  Grid,
-  Slider,
-  FormControlLabel,
-  Radio,
-  RadioGroup,
+  Grid2,
   FormControl,
-  InputLabel,
-  Select,
-  MenuItem,
   InputAdornment,
+  Collapse,
+  Paper,
+  Button
 } from "@mui/material";
+import { DayPicker } from "react-day-picker";
+import "react-day-picker/dist/style.css";
+import {
+  box,
+  title,
+  textField,
+  inputLable,
+  inputBackground,
+  menuPropsStyles,
+  submitButton,
+  sideMenuBox,
+  sideMenuTitle,
+  datePick,
+  calendarStyle,
+} from "./style/styles.js";
 
 function DailyData() {
-  const [date, setDate] = useState("Aug 8, 2024");
-  const [weight, setWeight] = useState("");
-  const [steps, setSteps] = useState("");
-  const [sleep, setSleep] = useState("");
-  const [mood, setMood] = useState(3);
-  const [exercise, setExercise] = useState("No");
-  const [exerciseType, setExerciseType] = useState("");
-  const [exerciseTime, setExerciseTime] = useState("");
-  const [water, setWater] = useState("");
-  const [breakfast, setBreakfast] = useState("");
-  const [lunch, setLunch] = useState("");
-  const [dinner, setDinner] = useState("");
 
-  const handleMoodChange = (event, newValue) => {
-    setMood(newValue);
+  const [formData, setFormData] = useState({
+    // entryDate: "",
+    weight: "",
+    steps: "",
+    sleep: "",
+    water: "",
+    exercise: ""
+  });
+  
+  // Handle input changes and update formData state
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prevData) => ({
+      ...prevData,
+      [name]: value,
+    }));
+  };
+
+  // const [mood, setMood] = useState(3);
+  // const [breakfast, setBreakfast] = useState("");
+  // const [lunch, setLunch] = useState("");
+  // const [dinner, setDinner] = useState("");
+  
+  // date
+  const [date, setDate] = useState(null); //
+
+  const [anchorEl, setAnchorEl] = useState(null); // control Popper content
+  const [open, setOpen] = useState(false); // control Popper open/close
+
+  const handleDateChange = (selectedDate) => {
+    setDate(selectedDate);
+    setOpen(false); // close after chosing date
+  };
+
+  const handleTextFieldClick = (event) => {
+    setAnchorEl(event.currentTarget);
+    setOpen((prevOpen) => !prevOpen); // open/close calendar
+  };
+
+  const formatDate = (date) => {
+    return date ? date.toLocaleDateString("en-CA") : "";
+  };
+
+  // const handleMoodChange = (event, newValue) => {
+  //   setMood(newValue);
+  // };
+
+  const calendarRef = useRef(null);
+
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (calendarRef.current && !calendarRef.current.contains(event.target)) {
+        setOpen(false); // Close the calendar if clicked outside
+      }
+    }
+
+    if (open) {
+      document.addEventListener("mousedown", handleClickOutside);
+    } else {
+      document.removeEventListener("mousedown", handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [open]);
+
+  const handleSubmit = async (event) => {
+    event.preventDefault(); // Prevent default form submission behavior (e.g., page reload)
+
+    // Clear any existing messages before processing the form
+    // setSuccessMessage('');
+    // setErrorMessage('');
+
+    try {
+      await apiClient.post("/enter-daily-data", formData);
+      console.log("Daily entry processed")
+      // setSuccessMessage('Profile updated!');
+    } catch (err) {
+      console.log("Error submitting daily entry", err);
+      // setErrorMessage('Error: Failed to update profile. Please try again');
+    }
   };
 
   return (
-    <Box
-      sx={{
-        position: "absolute",
-        top: "4rem",
-        right: 0,
-        bottom: 0,
-        width: "35%",
-        padding: "2%",
-        backgroundColor: "#303030",
-        borderRadius: "10px",
-        color: "white",
-        height: "calc(100vh - 4rem)",
-        overflowY: "auto",
-      }}
-    >
-      <Typography
-        variant="h6"
-        gutterBottom
-        sx={{
-          marginTop: "2%",
-          marginBottom: "2%",
-          color: "#E2E1E1",
-          fontSize: "1.4rem",
-          fontWeight: "600",
-        }}
-      >
+    <Box sx={box}>
+      <Typography variant="h6" gutterBottom sx={title}>
         Enter your data here:
       </Typography>
 
-      <Typography variant="body1" gutterBottom sx={{ marginBottom: "5%" }}>
-        {date}
-      </Typography>
+      <form onSubmit={handleSubmit}>
+      <TextField
+        label="Select a date"
+        value={formatDate(date)}
+        onClick={handleTextFieldClick}
+        readOnly
+        variant="filled"
+        sx={datePick}
+        fullWidth
+      />
+
+      <Collapse in={open}>
+        <Paper ref={calendarRef} sx={calendarStyle}>
+          <DayPicker
+            mode="single"
+            selected={date}
+            onSelect={handleDateChange}
+            styles={{
+              month: {
+                backgroundColor: "#C2D5C0",
+                padding: "1rem",
+                borderRadius: "20px",
+              },
+            }}
+          />
+        </Paper>
+      </Collapse>
 
       {/* Weight */}
-      <Grid container spacing={2}>
-        <Grid item xs={12} md={6}>
+      <Grid2 container spacing={2}>
+        <Grid2 item xs={12} md={6}>
           <TextField
             label="Weight"
             variant="filled"
             fullWidth
-            value={weight}
-            onChange={(e) => setWeight(e.target.value)}
+            name="weight"
+            value={formData.weight}
+            onChange={handleChange}
             InputProps={{
               endAdornment: (
                 <InputAdornment position="end">
@@ -85,38 +166,18 @@ function DailyData() {
                 </InputAdornment>
               ),
             }}
-            sx={{
-              backgroundColor: "#5E5E5E",
-              borderRadius: "10px",
-              "& .MuiInputBase-input": {
-                color: "#F4F4F4", // input color
-              },
-              "& .MuiInputLabel-root": {
-                color: "#CACACA", // label color
-              },
-              "& .MuiInputLabel-root.Mui-focused": {
-                color: "#F8DEBD", // focused label color
-              },
-              "& .MuiFilledInput-underline:before": {
-                borderBottom: "none", // no underline when unfocuced
-              },
-              "& .MuiFilledInput-underline:after": {
-                borderBottomColor: "#F8DEBD", // underline color when focuced
-              },
-              "& .MuiInputAdornment-root": {
-                color: "#F4F4F4", // lb color
-              },
-            }}
+            sx={textField}
           />
-        </Grid>
+        </Grid2>
         {/* Steps Count */}
-        <Grid item xs={12} md={6}>
+        <Grid2 item xs={12} md={6}>
           <TextField
             label="Count"
             variant="filled"
             fullWidth
-            value={steps}
-            onChange={(e) => setWeight(e.target.value)}
+            name="steps"
+            value={formData.steps}
+            onChange={handleChange}
             InputProps={{
               endAdornment: (
                 <InputAdornment position="end">
@@ -126,38 +187,18 @@ function DailyData() {
                 </InputAdornment>
               ),
             }}
-            sx={{
-              backgroundColor: "#5E5E5E",
-              borderRadius: "10px",
-              "& .MuiInputBase-input": {
-                color: "#F4F4F4", // input color
-              },
-              "& .MuiInputLabel-root": {
-                color: "#CACACA", // label color
-              },
-              "& .MuiInputLabel-root.Mui-focused": {
-                color: "#F8DEBD", // focused label color
-              },
-              "& .MuiFilledInput-underline:before": {
-                borderBottom: "none", // no underline when unfocuced
-              },
-              "& .MuiFilledInput-underline:after": {
-                borderBottomColor: "#F8DEBD", // underline color when focuced
-              },
-              "& .MuiInputAdornment-root": {
-                color: "#F4F4F4", // Steps color
-              },
-            }}
+            sx={textField}
           />
-        </Grid>
+        </Grid2>
         {/* Sleep hour */}
-        <Grid item xs={12} md={6}>
+        <Grid2 item xs={12} md={6}>
           <TextField
             label="Sleep"
             variant="filled"
             fullWidth
-            value={sleep}
-            onChange={(e) => setWeight(e.target.value)}
+            name="sleep"
+            value={formData.sleep}
+            onChange={handleChange}
             InputProps={{
               endAdornment: (
                 <InputAdornment position="end">
@@ -167,39 +208,19 @@ function DailyData() {
                 </InputAdornment>
               ),
             }}
-            sx={{
-              backgroundColor: "#5E5E5E",
-              borderRadius: "10px",
-              "& .MuiInputBase-input": {
-                color: "#F4F4F4", // input color
-              },
-              "& .MuiInputLabel-root": {
-                color: "#CACACA", // label color
-              },
-              "& .MuiInputLabel-root.Mui-focused": {
-                color: "#F8DEBD", // focused label color
-              },
-              "& .MuiFilledInput-underline:before": {
-                borderBottom: "none", // no underline when unfocuced
-              },
-              "& .MuiFilledInput-underline:after": {
-                borderBottomColor: "#F8DEBD", // underline color when focuced
-              },
-              "& .MuiInputAdornment-root": {
-                color: "#F4F4F4", // hour color
-              },
-            }}
+            sx={textField}
           />
-        </Grid>
+        </Grid2>
 
         {/* water */}
-        <Grid item xs={12} md={6}>
+        <Grid2 item xs={12} md={6}>
           <TextField
             label="Water"
             variant="filled"
             fullWidth
-            value={water}
-            onChange={(e) => setWater(e.target.value)}
+            name="water"
+            value={formData.water}
+            onChange={handleChange}
             InputProps={{
               endAdornment: (
                 <InputAdornment position="end">
@@ -209,30 +230,32 @@ function DailyData() {
                 </InputAdornment>
               ),
             }}
-            sx={{
-              backgroundColor: "#5E5E5E",
-              borderRadius: "10px",
-              "& .MuiInputBase-input": {
-                color: "#F4F4F4", // input color
-              },
-              "& .MuiInputLabel-root": {
-                color: "#CACACA", // label color
-              },
-              "& .MuiInputLabel-root.Mui-focused": {
-                color: "#F8DEBD", // focused label color
-              },
-              "& .MuiFilledInput-underline:before": {
-                borderBottom: "none", // no underline when unfocuced
-              },
-              "& .MuiFilledInput-underline:after": {
-                borderBottomColor: "#F8DEBD", // underline color when focuced
-              },
-              "& .MuiInputAdornment-root": {
-                color: "#F4F4F4", // hour color
-              },
-            }}
+            sx={textField}
           />
-        </Grid>
+        </Grid2>
+
+        {/* How long did you exercise */}
+        <Grid2 item xs={12} md={6}>
+          <FormControl fullWidth>
+            <TextField
+              data-testid="exerciseTime"
+              type="number"
+              name="exercise"
+              label="How long did you exercise - min"
+              value={formData.exercise}
+              onChange={handleChange}
+              required
+              InputLabelProps={{
+                sx: inputLable,
+              }}
+              InputProps={{
+                sx: inputBackground,
+              }}
+              variant="outlined"
+              fullWidth
+            />
+          </FormControl>
+        </Grid2>
         {/* Mood */}
         {/* <Grid item xs={12}>
           <Typography variant="body1">Mood</Typography>
@@ -307,17 +330,7 @@ function DailyData() {
         {/* <Grid item xs={12}>
           <FormControl fullWidth>
             <InputLabel
-              sx={{
-                backgroundColor: "#5E5E5E", // question font background color
-                padding: "0 2%",
-                color: "#CACACA", // font color when unfocused
-                borderRadius: "10px",
-                "&.Mui-focused": {
-                  // font color when focused
-                  color: "#F8DEBD",
-                  borderRadius: "10px",
-                },
-              }}
+              sx={inputLable}
             >
               Choose the exercise
             </InputLabel>
@@ -325,21 +338,8 @@ function DailyData() {
               value={exerciseType}
               onChange={(e) => setExerciseType(e.target.value)}
               label="How long did you exercise"
-              sx={{
-                backgroundColor: "#5E5E5E",
-                borderRadius: "10px",
-                "& .MuiInputBase-input": {
-                  color: "#F4F4F4", // text in box(answer) - text color
-                },
-              }}
-              MenuProps={{
-                PaperProps: {
-                  sx: {
-                    backgroundColor: "#6F6F6F", // dropdown background color
-                    color: "#F4F4F4", // dropdown text color
-                  },
-                },
-              }}
+              sx={inputBackground}
+              MenuProps={menuPropsStyles}
             >
               <MenuItem value="Running">Running</MenuItem>
               <MenuItem value="Walking">Walking</MenuItem>
@@ -347,51 +347,6 @@ function DailyData() {
             </Select>
           </FormControl>
         </Grid> */}
-
-        {/* How long did you exercise */}
-        <Grid item xs={12}>
-          <FormControl fullWidth>
-            <InputLabel
-              sx={{
-                backgroundColor: "#5E5E5E", // question font background color
-                padding: "0 2%",
-                color: "#CACACA", // font color when unfocused
-                borderRadius: "10px",
-                "&.Mui-focused": {
-                  // font color when focused
-                  color: "#F8DEBD",
-                  borderRadius: "10px",
-                },
-              }}
-            >
-              How long did you exercise
-            </InputLabel>
-            <Select
-              value={exerciseTime}
-              onChange={(e) => setExerciseTime(e.target.value)}
-              label="How long did you exercise"
-              sx={{
-                backgroundColor: "#5E5E5E",
-                borderRadius: "10px",
-                "& .MuiInputBase-input": {
-                  color: "#F4F4F4", // text in box(answer) - text color
-                },
-              }}
-              MenuProps={{
-                PaperProps: {
-                  sx: {
-                    backgroundColor: "#6F6F6F", // dropdown background color
-                    color: "#F4F4F4", // dropdown text color
-                  },
-                },
-              }}
-            >
-              <MenuItem value="30 mins">30 mins</MenuItem>
-              <MenuItem value="1 hour">1 hour</MenuItem>
-              <MenuItem value="2 hours">2 hours</MenuItem>
-            </Select>
-          </FormControl>
-        </Grid>
 
         {/* What did you take for breakfast */}
         {/* <Grid item xs={12}>
@@ -525,7 +480,15 @@ function DailyData() {
             </Select>
           </FormControl>
         </Grid> */}
-      </Grid>
+
+        {/* Submit Button */}
+        <Grid2 item xs={12}>
+          <Button type="submit" variant="contained" sx={submitButton}>
+            Submit
+          </Button>
+        </Grid2>
+      </Grid2>
+      </form>
     </Box>
   );
 }

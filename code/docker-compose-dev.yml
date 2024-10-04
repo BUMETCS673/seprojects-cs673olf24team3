@@ -39,7 +39,6 @@ services:
       - peak-performance
     ports:
       - "3000:3000"
-    # command: npm run start  # Run the development server with hot reloading
     depends_on: 
       - api
 

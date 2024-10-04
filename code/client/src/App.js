@@ -27,7 +27,7 @@ import {
 
 import HomeIcon from "@mui/icons-material/Home";
 import LoginIcon from "@mui/icons-material/Login";
-import AccountCircleIcon from "@mui/icons-material/AccountCircle";
+// import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import EditNoteIcon from "@mui/icons-material/EditNote";
 import TrackChangesIcon from "@mui/icons-material/TrackChanges";
 import CloseIcon from "@mui/icons-material/Close";
@@ -138,16 +138,6 @@ function App() {
                     <TrackChangesIcon />{" "}
                   </ListItemIcon>
                   <ListItemText primary="Create Goal" />
-                </ListItemButton>
-              </ListItem>
-
-              <ListItem disablePadding>
-                <ListItemButton component={Link} to="/create-user">
-                  <ListItemIcon>
-                    {" "}
-                    <AccountCircleIcon />{" "}
-                  </ListItemIcon>
-                  <ListItemText primary="Create User (rename to User Profile?)" />
                 </ListItemButton>
               </ListItem>
 

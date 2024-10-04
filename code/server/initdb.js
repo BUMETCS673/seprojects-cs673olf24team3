@@ -1,15 +1,17 @@
-//This file is for writing data to the database for testing purposes
+// This file is for initializing data to the MongoDB database 
 
 const db = require("./db.js")
 
 const User = db.getModel().userModel
 const Goal = db.getModel().goalModel
+const DailyEntry = db.getModel().dailyEntryModel
 
 async function init() {
     try {
         // Option to delete existing data for full reset
         // await User.deleteMany({})
         // await Goal.deleteMany({})
+        // await DailyEntry.deleteMany({})
 
         let goal1 = new Goal({
             goalId: 50001,
@@ -46,12 +48,24 @@ async function init() {
             // createdAt: "2024-09-01", // testing the default param in schema works
             goals: []
         })
+
+        let dailyEntry1 = new DailyEntry({
+            dailyEntryId: 1,
+            userId: 10001,
+            entryDate: "2024-10-04",
+            weight: 150,
+            steps: 9999,
+            sleep: 7.5,
+            water: 4,
+            exercise: 45
+        })
     
         await Promise.all([
             user1.save(),
             user2.save(),
             goal1.save(),
-            goal2.save()
+            goal2.save(),
+            dailyEntry1.save()
         ])
     
         let users = await User.find({})
@@ -59,6 +73,9 @@ async function init() {
 
         let goals = await Goal.find({})
         console.log(goals)
+
+        let dailyEntries = await DailyEntry.find({})
+        console.log(dailyEntries)
 
     } catch(error) {
         console.log(error)

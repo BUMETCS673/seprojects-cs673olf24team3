@@ -7,10 +7,10 @@ The Health and Wellness Tracker is a comprehensive web application built using t
 - Steps taken
 - Water intake
 - Sleep
-- Exercise routines
-- Diet
+- Exercise minutes
+- Weight
 
-Users can set daily and weekly goals for each of these areas and monitor their progress toward achieving these goals.
+Users can set goals for each of these areas and monitor their daily progress toward achieving these goals.
 
 ## Features
 
@@ -23,14 +23,13 @@ Users can set daily and weekly goals for each of these areas and monitor their p
 
 - **Steps Tracking:** Users can log and view their daily steps.
 - **Water Intake Tracking:** Users can record their daily water intake.
-- **Sleep Tracking:** Users can track their sleep duration and quality.
-- **Exercise Routines:** Users can log their exercise routines and view historical data.
-- **Diet Tracking:** Users can track their daily food intake and nutritional values.
+- **Sleep Tracking:** Users can track their sleep duration.
+- **Exercise Tracking:** Users can log their exercise time and view historical data.
+- **Weight Tracking:** Users can track their weight over time.
 
 ### Goals and Progress Monitoring
 
-- **Daily Goals:** Users can set and track daily goals for steps, water intake, sleep, exercise, and diet.
-- **Weekly Goals:** Users can set and monitor weekly goals for each health aspect.
+- **Daily Goals:** Users can set and track daily goals for steps, water intake, sleep, exercise, and weight.
 - **Progress Reports:** Users can view graphical reports of their progress towards their goals.
 
 ## Technology Stack
@@ -43,4 +42,3 @@ Users can set daily and weekly goals for each of these areas and monitor their p
 # How to run
 
 Refer to the [README in the code directory](https://github.com/BUMETCS673/seprojects-cs673olf24team3/blob/dev/code/README.md)
-

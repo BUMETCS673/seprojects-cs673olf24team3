@@ -1,7 +1,31 @@
-import axios from 'axios'
+import axios from 'axios';
+
+// console.log("API Base URL:", process.env.REACT_APP_BASE_URL);
+
+// const apiClient = axios.create({
+//   baseURL: process.env.REACT_APP_BASE_URL || 'http://localhost:5000', // Default to localhost for development
+// });
+
+// const apiClient = axios.create({
+//   baseURL: 'https://peak-performance-backend-394f316db343.herokuapp.com/', // Default to localhost for development
+// });
+
+// const apiClient = axios.create({
+//     baseURL: 'http://localhost:5000', // Default to localhost for development
+//   });
+
+var serverURL = null
+
+switch (process.env.NODE_ENV) {
+  case 'development':
+    serverURL = 'http://localhost:5000'
+    break
+  default:
+    serverURL = 'https://peak-performance-backend-394f316db343.herokuapp.com/'
+}
 
 const apiClient = axios.create({
-  baseURL: 'http://localhost:5000', // Base URL for API requests, update with environemnt variable for deployment
-})
+  baseURL: serverURL
+});
 
-export default apiClient
+export default apiClient;

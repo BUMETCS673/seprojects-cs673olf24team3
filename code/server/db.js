@@ -49,44 +49,18 @@ let userSchema = new Schema({
     collection: 'users'
 })
 
-// const getModel = async () => {
-// 	if (!connection) {
-// 	  try {
-// 		// Use mongoose.connect to establish the connection
-// 		await mongoose.connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true });
-// 		console.log('Connected to MongoDB!');
-  
-// 		// Set the connection and initialize models
-// 		connection = mongoose.connection;
-// 		userModel = connection.model('User', userSchema);
-// 		goalModel = connection.model('Goal', goalSchema);
-// 	  } catch (err) {
-// 		console.error('Failed to connect to MongoDB:', err.message);
-// 		process.exit(1);  // Exit the process on failure
-// 	  }
-// 	}
-  
-// 	// Return the models once connected
-// 	return { userModel, goalModel };
-//   };
-  
-//   const closeConnection = async () => {
-// 	if (connection) {
-// 	  try {
-// 		await connection.close();
-// 		console.log('MongoDB connection is closed');
-// 		connection = null;
-// 	  } catch (err) {
-// 		console.error('Error closing MongoDB connection:', err.message);
-// 	  }
-// 	}
-//   };
-  
-//   // Export the functions
-//   module.exports = {
-// 	getModel,
-// 	closeConnection
-//   };
+let dailyEntrySchema = new Schema({
+	dailyEntryId: { type: Number, required: true },
+	userId: { type: Number, required: true },
+	entryDate: { type: Date },
+	weight: { type: Number },
+	steps: { type: Number },
+	sleep: { type: Number },
+	water: { type: Number },
+	exercise: { type: Number }
+}, {
+    collection: 'daily_entries'
+})
 
 module.exports = {
     getModel: () => {
@@ -95,7 +69,8 @@ module.exports = {
 			console.log("Connected to MongoDB!")
 			userModel = connection.model("User", userSchema);
 			goalModel = connection.model("Goal", goalSchema);
-			models = {userModel: userModel, goalModel: goalModel}
+			dailyEntryModel = connection.model("DailyEntry", dailyEntrySchema);
+			models = {userModel: userModel, goalModel: goalModel, dailyEntryModel: dailyEntryModel}
 		}
 		return models
 	},
