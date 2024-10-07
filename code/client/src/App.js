@@ -11,7 +11,7 @@ import ManageDailyData from "./components/ManageDailyData.js";
 import LogoutButton from './components/Logout.js';
 
 import React, { useState, useEffect } from 'react';
-import LogoutIcon from '@mui/icons-material/Logout';
+
 
 // Styling
 import {
@@ -39,7 +39,6 @@ import TrackChangesIcon from "@mui/icons-material/TrackChanges";
 import TodayIcon from '@mui/icons-material/Today';
 import CloseIcon from "@mui/icons-material/Close";
 
-import { useNavigate } from 'react-router-dom';
 
 import "@fontsource/mulish";
 
@@ -169,7 +168,7 @@ function App({ RouterComponent = Router }) {
                     {" "}
                     <TrackChangesIcon />{" "}
                   </ListItemIcon>
-                  <ListItemText primary="Create Goal" />
+                  <ListItemText primary="Manage Goal" />
                 </ListItemButton>
               </ListItem>
 

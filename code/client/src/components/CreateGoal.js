@@ -15,32 +15,26 @@ import {
 } from "@mui/material";
 import {
   box,
-  title,
+  bigTitle,
   inputLable,
   inputBackground,
   menuPropsStyles,
   submitButton,
 } from "./style/styles.js";
 
-function CreateGoal() {
+function ManageGoal() {
   // Profile Data State
-  const [profileData, setProfileData] = useState({
-    userId: "",
-    email: "",
-    name: "",
-    gender: "",
-    dob: { year: 1900, month: 1, day: 1 },
-    height: { feet: "", inches: "" },
+  const [goalData, setGoalData] = useState({
+    sleepHours: "",
+    weightLbs: "",
+    stepsCounts: "",
+    waterIntakeGlasses: "",
+    exerciseMinutes: ""
   });
 
-  const [goalFormData, setGoalFormData] = useState({
-    type: "",
-    targetValue: 0,
-  });
-
+  const [error, setError] = useState(null);
   const [successMessage, setSuccessMessage] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
-  const [error, setError] = useState(null); // State for managing error when fetching profile
 
   // useEffect to fetch profile data
   useEffect(() => {
@@ -48,14 +42,14 @@ function CreateGoal() {
 
     if (token) {
       apiClient
-        .get("/api/users/manage-profile", {
+        .get("/api/goals/create-goal", {
           headers: { Authorization: `Bearer ${token}` },
         }) // Fetch user profile data from the backend
         .then((res) => {
-          setProfileData(res.data); // Set the fetched profile data
+          setGoalData(res.data); // Set the fetched profile data
         })
         .catch((err) => {
-          setError("Error fetching profile data. Try refreshing.");
+          setError("Error fetching goal data. Try refreshing.");
           console.log(err);
         });
     }
@@ -64,135 +58,120 @@ function CreateGoal() {
   // Handle input changes
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setGoalFormData((prevData) => ({
+    setGoalData((prevData) => ({
       ...prevData,
       [name]: value,
     }));
   };
 
   // Function to handle the form submission event
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault(); // Prevent default form submission behavior
-    clearMessages();
-
-    if (validateAndSetMessages(goalFormData)) {
-      createGoal(goalFormData);
-    }
-  };
-
-  // Clear messages
-  const clearMessages = () => {
+    
     setSuccessMessage('');
     setErrorMessage('');
-  };
 
-  // Validate form
-  const validateAndSetMessages = (formData) => {
-    const validationResult = validateGoalForm(formData);
+    const validationResult = validateGoalForm(goalData);
     if (!validationResult.isValid) {
       setErrorMessage(validationResult.message);
-      return false;
+      return;
     }
-    return true;
-  };
+  
 
-  // Create goal
-  const createGoal = async (formData) => {
-    try {
-      console.log("Creating new goal with data:", formData);
-
-      const token = authenticated();
-      console.log("Token:", token);
-
-      await apiClient.post("/api/goals/create-goal", formData, {
-        headers: { Authorization: `Bearer ${token}` }, // Pass token
-      });
-      
-      handleGoalSuccess();
-    } catch (error) {
-      handleGoalError(error);
+  try {
+    const token = authenticated();
+    await apiClient.post("/api/goals/create-goal", goalData, {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+    console.log("Updating goal");
+    setSuccessMessage('Goal updated!');
+    } catch (err) {
+      console.log("Error updating goal", err);
+      setErrorMessage('Error: Failed to update goal. Please try again');
     }
-  };
-
-  // Handle success
-  const handleGoalSuccess = () => {
-    console.log("Goal created successfully!");
-    setSuccessMessage('New goal successful!');
-  };
-
-  // Handle error
-  const handleGoalError = (error) => {
-    console.error("Error creating goal:", error);
-    setErrorMessage('Failed to create a new goal. Please try again.');
   };
 
   return (
     <Box sx={box}>
-      <Typography variant="h6" gutterBottom sx={title}>
-        Set up your goal here:
+      <Typography variant="h6" gutterBottom sx={bigTitle}>
+        Manage Goal
       </Typography>
-      <form onSubmit={handleSubmit}>
-        <Grid2 container spacing={2}>
-          {/* Select a goal type */}
-          <Grid2 item xs={12} md={6}>
-            <FormControl fullWidth>
-              <InputLabel sx={inputLable}>Select a goal type</InputLabel>
-              <Select
-                data-testid="goal-type-select"
-                name="type"
-                value={goalFormData.type}
-                onChange={handleChange}
-                label="Select a goal type"
-                sx={inputBackground}
-                MenuProps={menuPropsStyles}
-              >
-                <MenuItem value="sleep">Sleep (Hours)</MenuItem>
-                <MenuItem data-testid="goal-type-weight" value="weight">
-                  Weight (lbs)
-                </MenuItem>
-                <MenuItem value="steps">Steps (Step Count)</MenuItem>
-                <MenuItem value="water">Water Intake (Glasses)</MenuItem>
-                <MenuItem value="exercise">Exercise (Minutes)</MenuItem>
-              </Select>
-            </FormControl>
-          </Grid2>
-          {/* Target value */}
-          <Grid2 item xs={12} md={6}>
-            <FormControl fullWidth>
-              <TextField
-                data-testid="goal-targetValue-select"
-                type="number"
-                name="targetValue"
-                label="Target Value"
-                value={goalFormData.targetValue}
-                onChange={handleChange}
-                required
-                InputLabelProps={{
-                  sx: inputLable,
-                }}
-                InputProps={{
-                  sx: inputBackground,
-                }}
-                fullWidth
-              />
-            </FormControl>
-          </Grid2>
-          {/* Submit Button */}
-          <Grid2 item xs={12}>
-            <Button type="submit" variant="contained" sx={submitButton}>
-              Submit
-            </Button>
-          </Grid2>
-        </Grid2>
-      </form>
-      {errorMessage && (
-        <p style={{ color: "#E95D5C", fontWeight: "bold" }}>{errorMessage}</p>
+      {error ? (
+        <p>{error}</p>
+      ) : (
+        <form onSubmit={handleSubmit}>
+          <TextField
+            label="Weight (lbs)"
+            name="weightLbs"
+            value={goalData.weightLbs}
+            onChange={handleChange}
+            fullWidth
+            margin="normal"
+            type="number"
+            sx={inputBackground}
+            InputProps={{ inputProps: { min: 0 } }}
+          />
+          <TextField
+            label="Steps (counts)"
+            name="stepsCounts"
+            value={goalData.stepsCounts}
+            onChange={handleChange}
+            fullWidth
+            margin="normal"
+            type="number"
+            sx={inputBackground}
+            InputProps={{ inputProps: { min: 0 } }}
+          />
+          <TextField
+            label="Sleep (Hours)"
+            name="sleepHours"
+            value={goalData.sleepHours}
+            onChange={handleChange}
+            fullWidth
+            margin="normal"
+            type="number"
+            sx={inputBackground}
+            InputProps={{ inputProps: { min: 0, max: 24 } }}
+          />
+          
+          
+          <TextField
+            label="Water Intake (glasses)"
+            name="waterIntakeGlasses"
+            value={goalData.waterIntakeGlasses}
+            onChange={handleChange}
+            fullWidth
+            margin="normal"
+            type="number"
+            sx={inputBackground}
+            InputProps={{ inputProps: { min: 0 } }}
+          />
+          <TextField
+            label="Exercise (minutes)"
+            name="exerciseMinutes"
+            value={goalData.exerciseMinutes}
+            onChange={handleChange}
+            fullWidth
+            margin="normal"
+            type="number"
+            sx={inputBackground}
+            InputProps={{ inputProps: { min: 0 } }}
+          />
+          <Button
+            variant="contained"
+            color="primary"
+            type="submit"
+            fullWidth
+            sx={submitButton}
+          >
+            Update Goal
+          </Button>
+        </form>
       )}
-      {successMessage && (
-        <p style={{ color: "#008000", fontWeight: "bold" }}>{successMessage}</p>
-      )}
+      {errorMessage && <p style={{ color: '#E95D5C', fontWeight: "bold" }}>{errorMessage}</p>}
+      {successMessage && <p style={{ color: '#008000', fontWeight: "bold" }}>{successMessage}</p>}
     </Box>
   );
 }
 
-export default CreateGoal;
+export default ManageGoal;

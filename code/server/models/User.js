@@ -8,14 +8,14 @@ const progressSchema = new Schema({
 });
 
 // Goal Schema
-const goalSchema = new Schema({
-  goalId: { type: Number, required: true },
-  type: { type: String, required: true },
-  targetValue: { type: Number, required: true },
-  unit: { type: String, required: true },
-  createdAt: { type: Date, default: Date.now },
-  progress: { type: [progressSchema], default: [] },  // Array of progress entries
-});
+// const goalSchema = new Schema({
+//   goalId: { type: Number, required: true },
+//   type: { type: String, required: true },
+//   targetValue: { type: Number, required: true },
+//   unit: { type: String, required: true },
+//   createdAt: { type: Date, default: Date.now },
+//   progress: { type: [progressSchema], default: [] },  // Array of progress entries
+// });
 
 // User Schema
 const userSchema = new Schema({

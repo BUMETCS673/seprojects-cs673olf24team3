@@ -1,19 +1,38 @@
 export function validateGoalForm(formData) {
-    const { type, targetValue } = formData;
+    const { sleepHours, weightLbs, stepsCounts, waterIntakeGlasses, exerciseMinutes } = formData;
 
-    if (typeof type !== 'string' || type.trim() === '') {
-        console.log('Type is required and must be a non-empty string');
-        return { isValid: false, message: 'Type is required and must be a non-empty string' };
+
+    if(
+        sleepHours === "" ||
+        weightLbs === "" ||
+        stepsCounts === "" ||
+        waterIntakeGlasses === "" ||
+        exerciseMinutes === ""
+      )
+      {
+        return { isValid: false, message: 'Form field(s) missing' };
+    }  
+    if (isNaN(sleepHours) || sleepHours < 0 || sleepHours > 24) {
+      return { isValid: false, message: 'Sleep hours must be a number between 0 and 24' };
+    }
+  
+    if (isNaN(weightLbs) || weightLbs <= 0) {
+      return { isValid: false, message: 'Weight must be a positive number' };
+    }
+  
+    if (isNaN(stepsCounts) || stepsCounts < 0) {
+      return { isValid: false, message: 'Steps cannot be negative' };
+    }
+  
+    if (isNaN(waterIntakeGlasses) || waterIntakeGlasses < 0) {
+      return { isValid: false, message: 'Water intake cannot be negative' };
+    }
+  
+    if (isNaN(exerciseMinutes) || exerciseMinutes < 0) {
+      return { isValid: false, message: 'Exercise minutes cannot be negative' };
     }
 
-    // Convert targetValue to a number
-    const numericValue = Number(targetValue);
-
-    if (typeof numericValue !== 'number' || isNaN(numericValue) || numericValue < 0) {
-        console.log('Target value must be a valid number greater than or equal to zero');
-        return { isValid: false, message: 'Target value must be a valid number greater than or equal to zero' };
-    }
-
-    // If all validations pass
     return { isValid: true, message: 'Form is valid' };
+
+  
 }

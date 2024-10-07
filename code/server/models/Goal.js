@@ -3,12 +3,12 @@ const Schema = mongoose.Schema;
 
 // Goal Schema
 const goalSchema = new Schema({
-  goalId: { type: Number, required: true },
-  type: { type: String, required: true },
-  targetValue: { type: Number, required: true },
-  unit: { type: String, required: true },
-  createdAt: { type: Date, default: Date.now },
-  userId: { type: Number, required: false }
+  userId: { type: Number, required: true },
+  sleepHours: { type: Number, default: 0 },
+  weightLbs: { type: Number, default: 0 },
+  stepsCounts: { type: Number, default: 0 },
+  waterIntakeGlasses: { type: Number, default: 0 },
+  exerciseMinutes: { type: Number, default: 0 },
 }, {
   collection: 'goals',  // Specify the collection name
 });

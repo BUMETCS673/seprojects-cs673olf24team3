@@ -1,9 +1,10 @@
 // routes/goalRoutes.js
 const express = require('express');
-const { createGoal } = require('../controllers/goalController');
+const { createGoal, updateGoal } = require('../controllers/goalController');
 const router = express.Router();
 
 // Create a new goal
-router.post('/create-goal', createGoal);
+router.get('/create-goal', createGoal);
+router.post('/create-goal', updateGoal);
 
 module.exports = router;
