@@ -1,0 +1,24 @@
+# /etc/nginx/nginx.conf
+events {}
+
+http {
+    include       mime.types;
+    default_type  application/octet-stream;
+
+    server {
+        listen ${PORT};
+
+        location / {
+            root   /usr/share/nginx/html;
+            index  index.html;
+            try_files $uri /index.html;
+        }
+
+        # Additional configuration to ensure correct MIME types for static assets
+        location ~* \.(css|js|woff2?|ttf|eot|svg|png|jpg|jpeg|gif)$ {
+            root /usr/share/nginx/html;
+            expires 1d;
+            add_header Cache-Control "public, must-revalidate, proxy-revalidate";
+        }
+    }
+}

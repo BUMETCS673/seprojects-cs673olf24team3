@@ -1,0 +1,25 @@
+# Use an official Node.js image as the base image
+FROM node:18-alpine AS build
+
+# Set the working directory inside the container
+WORKDIR /app
+
+# Copy the package.json and package-lock.json files first to leverage Docker caching
+COPY client/package.json ./  
+COPY client/package-lock.json ./  
+
+# Install dependencies
+RUN npm install
+
+# Copy the rest of the application source code
+COPY client/. .
+
+# Set environment variables for development
+ENV NODE_ENV=development
+ENV CHOKIDAR_USEPOLLING=true  
+
+# Expose port 3000 for the React development server
+EXPOSE 3000
+
+# Start the React app using the npm start command
+CMD ["npm", "start"]

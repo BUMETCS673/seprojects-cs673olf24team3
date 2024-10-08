@@ -1,0 +1,6 @@
+# heroku.yml
+build:
+  docker:
+    web: ./code/server/Dockerfile.production  # Path to your Dockerfile for the server
+run:
+  web: docker-compose -f ./code/docker-compose-production.yml up  # Command to run your app

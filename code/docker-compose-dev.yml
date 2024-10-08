@@ -1,0 +1,51 @@
+services:
+  # MongoDB Service
+  mongo:
+    image: mongo:latest
+    ports:
+      - 27017:27017
+    volumes:
+      - mongo_data:/data/db
+    networks:
+      - peak-performance
+
+  api: 
+    image: api-dev:latest
+    env_file: .env.development
+    build:
+      context: .
+      dockerfile: ./server/Dockerfile.dev  # This is correct
+    volumes:
+      - ./server:/app
+      - /app/node_modules     
+    ports:
+      - "5000:5000" 
+    # command: nodemon --watch . --exec node server.js  # Use nodemon to watch file changes
+    depends_on:
+      - mongo
+    networks:
+      - peak-performance
+
+  client:
+    image: client-dev:latest
+    env_file: .env.development
+    build: 
+      context: .  # Specify context here
+      dockerfile: ./client/Dockerfile.dev 
+    volumes:
+      - ./client:/app
+      - /app/node_modules   
+    networks:
+      - peak-performance
+    ports:
+      - "3000:3000"
+    depends_on: 
+      - api
+
+volumes:
+  mongo_data:
+    driver: local
+
+networks:
+  peak-performance:
+    driver: bridge

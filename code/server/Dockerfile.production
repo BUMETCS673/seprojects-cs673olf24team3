@@ -1,0 +1,31 @@
+# Use the official Node.js v20.17.0 image
+FROM node:18-alpine AS build
+
+# Set build arguments
+# Set environment variable for production build
+ENV NODE_ENV=production
+
+# Add a line in your Dockerfile to print environment variables (for debugging)
+RUN printenv
+
+# Set the working directory inside the container
+WORKDIR /app
+
+# Copy package.json and package-lock.json files using paths relative to `root/code`
+COPY server/package.json ./  
+COPY server/package-lock.json ./  
+
+# Install dependencies
+RUN npm ci
+
+# Copy the rest of the server source code using paths relative to the build context
+COPY server/. .  
+
+# Print environment variables for debugging (remove this in production)
+# RUN printenv
+
+# Expose the port that the application will run on
+EXPOSE 5000
+
+# Start the Node.js application
+CMD ["npm", "run", "start"]
