@@ -40,7 +40,7 @@ import TodayIcon from "@mui/icons-material/Today";
 
 import "@fontsource/mulish";
 
-const sidebarWidth = "10vw";
+const sidebarWidth = "15vw";
 const appBarHeight = "5rem";
 
 const theme = createTheme({
@@ -143,7 +143,7 @@ function App({ RouterComponent = Router }) {
                     {" "}
                     <HomeIcon />{" "}
                   </ListItemIcon>
-                  <ListItemText primary="Home" />
+                  <ListItemText primary="Home" sx={{ marginLeft: "-10px" }} />
                 </ListItemButton>
               </ListItem>
 
@@ -153,7 +153,10 @@ function App({ RouterComponent = Router }) {
                     <ListItemIcon>
                       <LoginIcon />
                     </ListItemIcon>
-                    <ListItemText primary="Login" />
+                    <ListItemText
+                      primary="Login"
+                      sx={{ marginLeft: "-10px" }}
+                    />
                   </ListItemButton>
                 </ListItem>
               ) : (
@@ -166,7 +169,10 @@ function App({ RouterComponent = Router }) {
                     {" "}
                     <EditNoteIcon />{" "}
                   </ListItemIcon>
-                  <ListItemText primary="Record Daily Data" />
+                  <ListItemText
+                    primary="Record Daily Data"
+                    sx={{ marginLeft: "-10px" }}
+                  />
                 </ListItemButton>
               </ListItem>
 
@@ -176,7 +182,10 @@ function App({ RouterComponent = Router }) {
                     {" "}
                     <TodayIcon />{" "}
                   </ListItemIcon>
-                  <ListItemText primary="Manage Daily Data" />
+                  <ListItemText
+                    primary="Manage Daily Data"
+                    sx={{ marginLeft: "-10px" }}
+                  />
                 </ListItemButton>
               </ListItem>
 
@@ -186,7 +195,10 @@ function App({ RouterComponent = Router }) {
                     {" "}
                     <TrackChangesIcon />{" "}
                   </ListItemIcon>
-                  <ListItemText primary="Create Goal" />
+                  <ListItemText
+                    primary="Create Goal"
+                    sx={{ marginLeft: "-10px" }}
+                  />
                 </ListItemButton>
               </ListItem>
 
@@ -196,7 +208,10 @@ function App({ RouterComponent = Router }) {
                     {" "}
                     <AccountCircleIcon />{" "}
                   </ListItemIcon>
-                  <ListItemText primary="Manage Profile" />
+                  <ListItemText
+                    primary="Manage Profile"
+                    sx={{ marginLeft: "-10px" }}
+                  />
                 </ListItemButton>
               </ListItem>
 

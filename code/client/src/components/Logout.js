@@ -1,20 +1,24 @@
 // LogoutButton.js
 
-import React from 'react';
-import { useNavigate } from 'react-router-dom';
-import LogoutIcon from '@mui/icons-material/Logout';
-import { ListItem, ListItemButton, ListItemIcon, ListItemText } from '@mui/material';
+import React from "react";
+import { useNavigate } from "react-router-dom";
+import LogoutIcon from "@mui/icons-material/Logout";
+import {
+  ListItem,
+  ListItemButton,
+  ListItemIcon,
+  ListItemText,
+} from "@mui/material";
 
 function LogoutButton({ setIsAuthenticated }) {
   const navigate = useNavigate();
 
   const handleLogout = () => {
- 
-    localStorage.removeItem('authToken');
+    localStorage.removeItem("authToken");
 
     setIsAuthenticated(false);
 
-    navigate('/login');
+    navigate("/login");
   };
 
   return (
@@ -23,7 +27,7 @@ function LogoutButton({ setIsAuthenticated }) {
         <ListItemIcon>
           <LogoutIcon />
         </ListItemIcon>
-        <ListItemText primary="Logout" />
+        <ListItemText primary="Logout" sx={{ marginLeft: "-10px" }} />
       </ListItemButton>
     </ListItem>
   );
