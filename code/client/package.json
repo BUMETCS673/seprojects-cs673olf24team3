@@ -19,7 +19,7 @@
     "axios": "^1.7.7",
     "babel-jest": "^29.7.0",
     "css-loader": "^7.1.2",
-    "css-select": "^3.1.1",
+    "css-select": "^5.1.0",
     "jsonwebtoken": "^9.0.2",
     "nth-check": "^2.0.1",
     "postcss": "^8.4.47",
