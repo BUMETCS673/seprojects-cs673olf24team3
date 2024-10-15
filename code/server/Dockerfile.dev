@@ -1,0 +1,24 @@
+# Use the official Node.js v20.17.0 image
+FROM node:18-alpine AS build
+
+# Set the working directory inside the container
+WORKDIR /app
+
+# Copy package.json and package-lock.json first to leverage Docker layer caching
+COPY server/package.json ./  
+COPY server/package-lock.json ./   
+
+# Install dependencies
+RUN npm ci
+
+# Install nodemon globally for live reload
+RUN npm install -g nodemon
+
+# Copy the rest of the application files
+COPY server/. .  
+
+# Expose the port that the application will run on
+EXPOSE 5000
+
+# Use nodemon to run the server and watch for file changes
+CMD ["npm", "run", "dev"]

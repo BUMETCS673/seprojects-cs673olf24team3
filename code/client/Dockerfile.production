@@ -1,0 +1,48 @@
+# Use an official Node.js image as the base image
+FROM node:18-alpine AS build
+
+# Set the working directory inside the container
+WORKDIR /app
+
+# Copy the package.json and package-lock.json files first to leverage Docker caching
+# Use relative paths from `root/code` to `root/code/client` directory
+COPY client/package.json ./  
+COPY client/package-lock.json ./  
+
+# Install dependencies
+RUN npm ci
+
+# Copy the rest of the client application's source code
+# Ensure you're copying files from `client` folder inside the build context (`root/code`)
+COPY client/. .  
+
+# Set environment variable for production build
+ENV NODE_ENV=production
+
+# Build the React app
+RUN npm run build
+
+# Use an official Nginx image as a base
+FROM nginx:alpine
+
+# Copy the shared Nginx configuration template from the host machine.
+COPY client/nginx.conf.template /etc/nginx/nginx.conf.template
+
+# Copy your built web files to the container
+COPY --from=build /app/build /usr/share/nginx/html
+
+# Expose the port that the application will run on
+EXPOSE ${PORT}
+
+# Copy entrypoint.sh to a standard location
+COPY client/entrypoint.sh /usr/local/bin/entrypoint.sh
+
+# Make the entrypoint script executable
+RUN chmod +x /usr/local/bin/entrypoint.sh
+
+# Set environment variable for the port (defaulting to 80)
+#Testing automatic deploys in Heroku
+#ENV PORT=${PORT}
+
+# Specify the entrypoint
+ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]

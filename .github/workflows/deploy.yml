@@ -1,0 +1,115 @@
+name: Deploy to Heroku
+
+on:
+  push:
+    branches:
+      - dev
+      - release/*
+
+jobs:
+  # Step 1: Testing using Jest
+  Test-Client:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v2
+
+      - name: Setup Node.js environment
+        uses: actions/setup-node@v3
+        with:
+          node-version: '16.x' # Use the version of Node.js your project requires
+
+      - name: Install dependencies for the client
+        run: |
+          cd code/client
+          npm ci
+
+      - name: Run Jest tests
+        run: |
+          cd code/client
+          npm test
+
+  # Step 2: Testing using Jest
+  Test-Server:
+    runs-on: ubuntu-latest
+    needs: Test-Client
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v2
+
+      - name: Setup Node.js environment
+        uses: actions/setup-node@v3
+        with:
+          node-version: '16.x' # Use the version of Node.js your project requires
+
+      - name: Install dependencies for the server
+        run: |
+          cd code/server
+          npm ci
+
+      - name: Run Jest tests
+        run: |
+          cd code/server
+          npm test
+
+  # Step 3: Deployment job depends on successful completion of tests
+  Deploy:
+    runs-on: ubuntu-latest
+    needs: Test-Server  # This ensures that the deploy job runs only if the test job succeeds
+
+    env:
+      DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+      DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+      HEROKU_EMAIL: ${{ secrets.HEROKU_EMAIL }}
+      HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
+      HEROKU_APP_NAME_CLIENT: ${{ secrets.HEROKU_APP_NAME_CLIENT }} 
+      HEROKU_APP_NAME_SERVER: ${{ secrets.HEROKU_APP_NAME_SERVER }}
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v2
+
+      - name: Login to DockerHub Registry
+        run: echo ${{ secrets.DOCKER_PASSWORD }} | docker login -u ${{ secrets.DOCKER_USERNAME }} --password-stdin
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      - name: Move heroku.yml to root
+        run: cp code/heroku.yml ./heroku.yml
+
+      - name: Move Procfile to root
+        run: cp code/Procfile ./Procfile
+      
+      - name: Log in to Heroku Container Registry
+        run: |
+          echo "$HEROKU_API_KEY" | docker login --username="$HEROKU_EMAIL" --password-stdin registry.heroku.com
+
+      - name: Install Docker Compose
+        run: |
+          sudo curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+          sudo chmod +x /usr/local/bin/docker-compose
+          docker-compose --version
+
+      - name: Build Images Using Docker Compose
+        run: |
+          docker-compose -f code/docker-compose-production.yml --project-directory ./code build
+
+      - name: Tag and Push API Image to Heroku Container Registry
+        run: |
+          docker tag api-production:latest registry.heroku.com/${{ env.HEROKU_APP_NAME_SERVER }}/web
+          docker push registry.heroku.com/${{ env.HEROKU_APP_NAME_SERVER }}/web
+
+      - name: Tag and Push Client Image to Heroku Container Registry
+        run: |
+          docker tag client-production:latest registry.heroku.com/${{ env.HEROKU_APP_NAME_CLIENT }}/web
+          docker push registry.heroku.com/${{ env.HEROKU_APP_NAME_CLIENT }}/web
+
+      - name: Release the API on Heroku
+        run: |
+          heroku container:release web --app ${{ env.HEROKU_APP_NAME_SERVER }}
+
+      - name: Release the Client on Heroku
+        run: |
+          heroku container:release web --app ${{ env.HEROKU_APP_NAME_CLIENT }}
+

@@ -1,0 +1,33 @@
+services:
+  api:
+    build:
+      context: .
+      dockerfile: ./server/Dockerfile.production
+    container_name: react-ui
+    env_file: .env.production
+    image: api-production:latest  # Use Heroku registry format
+    restart: unless-stopped
+    networks:
+      - peak-performance
+    ports:
+      - "5000:5000"  # Map container port 5000 to host port 5000
+
+  client:
+    build:
+      context: .
+      dockerfile: ./client/Dockerfile.production
+    env_file:
+      - ./client/.env.production
+    container_name: node-api
+    image: client-production:latest  # Use Heroku registry format
+    restart: unless-stopped
+    networks:
+      - peak-performance
+    depends_on:
+      - api
+    ports:
+      - "3000:3000"  # Map container port 3000 to host port 3000
+
+networks:
+  peak-performance:
+    driver: bridge

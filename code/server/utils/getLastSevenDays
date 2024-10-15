@@ -1,0 +1,22 @@
+// Helper function to get last 7 days in UTC
+function getLastSevenDays(entryDateString) {
+    const dates = [];
+
+    // Split the "YYYY-MM-DD" date string
+    const [year, month, day] = entryDateString.split('-').map(Number);
+
+    // Create a new Date in UTC for the provided date
+    const entryDateStart = new Date(Date.UTC(year, month - 1, day)); // Month is zero-indexed
+    entryDateStart.setUTCHours(0, 0, 0, 0); // Ensure time is set to 00:00:00
+
+    // Loop to get the last 7 days including the provided "today"
+    for (let i = 0; i < 7; i++) {
+        const date = new Date(entryDateStart);
+        date.setUTCDate(entryDateStart.getUTCDate() - i); // Go back i days
+        dates.unshift(date); // Add date to the beginning of the array (reversing order)
+    }
+
+    return dates;
+}
+
+module.exports = getLastSevenDays;
